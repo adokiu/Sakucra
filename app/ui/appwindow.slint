@@ -1,0 +1,115 @@
+import { LauncherBackground } from "background.slint";
+import { HomePage } from "home_page.slint";
+import { SettingsPage } from "settings_page.slint";
+import { VersionsPage } from "versions_page.slint";
+
+export component AppWindow inherits Window {
+    title: "Sakucra";
+    min-width: 420px;
+    min-height: 640px;
+    preferred-width: 420px;
+    preferred-height: 680px;
+    background: #fafbff;
+
+    in-out property <int> current-page: 0;
+
+    in-out property <string> username: "Player";
+    in-out property <bool> login-microsoft: false;
+    in-out property <string> selected-version: "";
+    in-out property <[string]> version-list: [];
+    in-out property <string> welcome-text: "欢迎回来";
+    in-out property <string> launch-subtitle: "请先下载游戏  离线模式";
+    in-out property <bool> launching: false;
+    in-out property <bool> show-version-dropdown: false;
+
+    in-out property <int> settings-tab: 0;
+    in-out property <[string]> java-lines: [];
+    in-out property <bool> java-searching: true;
+    in-out property <string> java-summary: "正在搜索本机 Java…";
+
+    callback username-changed(string);
+    callback open-settings();
+    callback open-versions();
+    callback back-home();
+    callback set-login-offline();
+    callback set-login-microsoft();
+    callback toggle-version-dropdown();
+    callback select-version(string);
+    callback launch-game();
+    callback refresh-java();
+    callback set-settings-tab(int);
+    callback minimize-window();
+    callback close-window();
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        clip: true;
+        border-radius: 8px;
+
+        LauncherBackground {}
+
+        if root.current-page == 0: HomePage {
+            username: root.username;
+            login-microsoft: root.login-microsoft;
+            selected-version: root.selected-version;
+            version-list: root.version-list;
+            welcome-text: root.welcome-text;
+            launch-subtitle: root.launch-subtitle;
+            launching: root.launching;
+            show-version-dropdown: root.show-version-dropdown;
+            username-changed(name) => {
+                root.username-changed(name);
+            }
+            open-settings => {
+                root.open-settings();
+            }
+            open-versions => {
+                root.open-versions();
+            }
+            set-login-offline => {
+                root.set-login-offline();
+            }
+            set-login-microsoft => {
+                root.set-login-microsoft();
+            }
+            toggle-version-dropdown => {
+                root.toggle-version-dropdown();
+            }
+            select-version(ver) => {
+                root.select-version(ver);
+            }
+            launch-game => {
+                root.launch-game();
+            }
+            minimize-window => {
+                root.minimize-window();
+            }
+            close-window => {
+                root.close-window();
+            }
+        }
+
+        if root.current-page == 1: SettingsPage {
+            active-tab: root.settings-tab;
+            java-lines: root.java-lines;
+            java-searching: root.java-searching;
+            java-summary: root.java-summary;
+            back => {
+                root.back-home();
+            }
+            set-tab(tab) => {
+                root.set-settings-tab(tab);
+            }
+            refresh-java => {
+                root.refresh-java();
+            }
+        }
+
+        if root.current-page == 2: VersionsPage {
+            back => {
+                root.back-home();
+            }
+        }
+    }
+}

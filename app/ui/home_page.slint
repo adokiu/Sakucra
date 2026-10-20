@@ -1,0 +1,312 @@
+import { LineEdit, ScrollView } from "std-widgets.slint";
+
+export component IconTopButton inherits Rectangle {
+    in property <string> label;
+    callback clicked();
+
+    width: 34px;
+    height: 30px;
+    border-radius: 6px;
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Text {
+            text: root.label;
+            color: touch.has-hover ? #1d1d1f : #86868b;
+            font-size: 12px;
+            font-weight: 600;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    background: touch.has-hover ? #0000000a : transparent;
+}
+
+export component HomePage inherits Rectangle {
+    in property <string> username;
+    in property <bool> login-microsoft;
+    in property <string> selected-version;
+    in property <[string]> version-list;
+    in property <string> welcome-text;
+    in property <string> launch-subtitle;
+    in property <bool> launching;
+    in property <bool> show-version-dropdown;
+
+    callback username-changed(string);
+    callback open-settings();
+    callback open-versions();
+    callback set-login-offline();
+    callback set-login-microsoft();
+    callback toggle-version-dropdown();
+    callback select-version(string);
+    callback launch-game();
+    callback minimize-window();
+    callback close-window();
+
+    width: 100%;
+    height: 100%;
+    background: transparent;
+
+    VerticalLayout {
+        spacing: 0;
+
+        HorizontalLayout {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            spacing: 4px;
+
+            HorizontalLayout {
+                spacing: 2px;
+                IconTopButton {
+                    label: "设置";
+                    clicked => {
+                        root.open-settings();
+                    }
+                }
+                IconTopButton {
+                    label: "下载";
+                    clicked => {
+                        root.open-versions();
+                    }
+                }
+                IconTopButton {
+                    label: "实例";
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            HorizontalLayout {
+                spacing: 4px;
+                IconTopButton {
+                    label: "—";
+                    clicked => {
+                        root.minimize-window();
+                    }
+                }
+                IconTopButton {
+                    label: "×";
+                    clicked => {
+                        root.close-window();
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+            min-height: 160px;
+            Image {
+                source: @image-url("../assets/grass_block.png");
+                width: 72px;
+                height: 72px;
+                opacity: 0.35;
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+            }
+        }
+
+        VerticalLayout {
+            padding-left: 16px;
+            padding-right: 16px;
+            spacing: 4px;
+
+            Rectangle {
+                height: 76px;
+                background: #ffffffbf;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: #00000014;
+
+                HorizontalLayout {
+                    padding: 12px;
+                    spacing: 12px;
+
+                    Image {
+                        source: @image-url("../assets/grass_block.png");
+                        width: 48px;
+                        height: 48px;
+                    }
+
+                    VerticalLayout {
+                        spacing: 6px;
+                        horizontal-stretch: 1;
+                        LineEdit {
+                            text: root.username;
+                            font-size: 14px;
+                            edited => {
+                                root.username-changed(self.text);
+                            }
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Rectangle {
+                                height: 26px;
+                                min-width: 48px;
+                                border-radius: 4px;
+                                background: !root.login-microsoft ? #007aff : #ffffff99;
+                                border-width: 1px;
+                                border-color: !root.login-microsoft ? #007aff : #0000000a;
+                                TouchArea {
+                                    clicked => {
+                                        root.set-login-offline();
+                                    }
+                                    Text {
+                                        text: "离线";
+                                        color: !root.login-microsoft ? #ffffff : #86868b;
+                                        font-size: 11px;
+                                        horizontal-alignment: center;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                height: 26px;
+                                min-width: 48px;
+                                border-radius: 4px;
+                                background: root.login-microsoft ? #007aff : #ffffff99;
+                                border-width: 1px;
+                                border-color: root.login-microsoft ? #007aff : #0000000a;
+                                TouchArea {
+                                    clicked => {
+                                        root.set-login-microsoft();
+                                    }
+                                    Text {
+                                        text: "正版";
+                                        color: root.login-microsoft ? #ffffff : #86868b;
+                                        font-size: 11px;
+                                        horizontal-alignment: center;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        min-width: 112px;
+                        height: 36px;
+                        border-radius: 6px;
+                        background: #ffffffcc;
+                        border-width: 1px;
+                        border-color: #0000000a;
+                        TouchArea {
+                            clicked => {
+                                root.toggle-version-dropdown();
+                            }
+                            HorizontalLayout {
+                                padding-left: 10px;
+                                padding-right: 10px;
+                                Text {
+                                    text: root.selected-version == "" ? "选择版本" : root.selected-version;
+                                    color: #1d1d1f;
+                                    font-size: 12px;
+                                    font-weight: 500;
+                                    vertical-alignment: center;
+                                    horizontal-stretch: 1;
+                                }
+                                Text {
+                                    text: "v";
+                                    color: #86868b;
+                                    font-size: 10px;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if root.show-version-dropdown: Rectangle {
+                height: 120px;
+                background: #ffffff;
+                border-radius: 6px;
+                border-width: 1px;
+                border-color: #0000000a;
+
+                ScrollView {
+                    VerticalLayout {
+                        padding: 4px;
+                        if root.version-list.length == 0: Text {
+                            padding: 8px;
+                            text: "无已安装版本";
+                            color: #86868b;
+                            font-size: 12px;
+                        }
+                        for ver in root.version-list: Rectangle {
+                            height: 30px;
+                            background: ver == root.selected-version ? #007aff1a : transparent;
+                            border-radius: 4px;
+                            TouchArea {
+                                clicked => {
+                                    root.select-version(ver);
+                                }
+                                Text {
+                                    x: 10px;
+                                    text: ver;
+                                    color: ver == root.selected-version ? #007aff : #1d1d1f;
+                                    font-size: 12px;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            padding-bottom: 16px;
+
+            Rectangle {
+                height: 86px;
+                background: #ffffffd9;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: #00000014;
+
+                TouchArea {
+                    enabled: !root.launching;
+                    clicked => {
+                        root.launch-game();
+                    }
+                    HorizontalLayout {
+                        padding: 16px;
+                        VerticalLayout {
+                            spacing: 4px;
+                            horizontal-stretch: 1;
+                            Text {
+                                text: root.launching ? "启动中..." : root.welcome-text;
+                                font-size: 26px;
+                                font-weight: 600;
+                                color: #1d1d1f;
+                                wrap: word-wrap;
+                            }
+                            Text {
+                                text: root.launch-subtitle;
+                                font-size: 11px;
+                                color: #86868b;
+                                wrap: word-wrap;
+                            }
+                        }
+                        Text {
+                            text: "›";
+                            font-size: 22px;
+                            color: #86868b;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

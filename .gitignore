@@ -1,0 +1,5 @@
+/target/
+/app/target/
+/crates/*/target/
+**/*.slint-cache/
+.DS_Store

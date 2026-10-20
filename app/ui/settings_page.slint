@@ -1,0 +1,227 @@
+import { ScrollView, ListView } from "std-widgets.slint";
+import { IconTopButton } from "home_page.slint";
+
+export component SettingsSidebarItem inherits Rectangle {
+    in property <string> label;
+    in property <bool> active;
+    callback activate();
+
+    height: 36px;
+    border-radius: 6px;
+    background: root.active ? #007aff1f : transparent;
+
+    TouchArea {
+        clicked => {
+            root.activate();
+        }
+        Text {
+            text: root.label;
+            color: root.active ? #007aff : #424245;
+            font-size: 12px;
+            font-weight: root.active ? 600 : 400;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+export component SettingsPage inherits Rectangle {
+    in property <int> active-tab;
+    in property <[string]> java-lines;
+    in property <bool> java-searching;
+    in property <string> java-summary;
+
+    callback back();
+    callback set-tab(int);
+    callback refresh-java();
+
+    width: 100%;
+    height: 100%;
+    background: #ffffff80;
+
+    VerticalLayout {
+        spacing: 0;
+
+        HorizontalLayout {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            IconTopButton {
+                label: "返回";
+                clicked => {
+                    root.back();
+                }
+            }
+            Text {
+                text: "设置";
+                font-size: 15px;
+                font-weight: 600;
+                color: #1d1d1f;
+                vertical-alignment: center;
+                padding-left: 8px;
+            }
+        }
+
+        HorizontalLayout {
+            vertical-stretch: 1;
+            padding: 8px;
+            spacing: 8px;
+
+            Rectangle {
+                width: 96px;
+                background: #ffffff80;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: #0000000a;
+
+                VerticalLayout {
+                    padding: 4px;
+                    spacing: 2px;
+
+                SettingsSidebarItem {
+                    label: "启动";
+                    active: root.active-tab == 0;
+                    activate => {
+                        root.set-tab(0);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "联机";
+                    active: root.active-tab == 1;
+                    activate => {
+                        root.set-tab(1);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "下载";
+                    active: root.active-tab == 2;
+                    activate => {
+                        root.set-tab(2);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "个性化";
+                    active: root.active-tab == 3;
+                    activate => {
+                        root.set-tab(3);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "其他";
+                    active: root.active-tab == 4;
+                    activate => {
+                        root.set-tab(4);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "帮助";
+                    active: root.active-tab == 5;
+                    activate => {
+                        root.set-tab(5);
+                    }
+                }
+                SettingsSidebarItem {
+                    label: "关于";
+                    active: root.active-tab == 6;
+                    activate => {
+                        root.set-tab(6);
+                    }
+                }
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+                background: #00000008;
+                border-radius: 8px;
+
+                VerticalLayout {
+                    padding: 12px;
+
+                if root.active-tab == 0: VerticalLayout {
+                    spacing: 12px;
+                    Text {
+                        text: "启动";
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: #1d1d1f;
+                    }
+                    Text {
+                        text: "游戏 Java";
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: #007aff;
+                    }
+                    HorizontalLayout {
+                        Text {
+                            text: root.java-summary;
+                            color: #86868b;
+                            font-size: 12px;
+                            horizontal-stretch: 1;
+                            wrap: word-wrap;
+                        }
+                        Rectangle {
+                            height: 28px;
+                            min-width: 72px;
+                            border-radius: 6px;
+                            background: root.java-searching ? #0000000a : #007aff;
+                            TouchArea {
+                                enabled: !root.java-searching;
+                                clicked => {
+                                    root.refresh-java();
+                                }
+                                Text {
+                                    text: root.java-searching ? "搜索中" : "刷新";
+                                    color: #ffffff;
+                                    font-size: 12px;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        vertical-stretch: 1;
+                        min-height: 160px;
+                        background: #ffffff;
+                        border-radius: 6px;
+                        border-width: 1px;
+                        border-color: #0000000a;
+                        ScrollView {
+                            ListView {
+                                for line in root.java-lines: Rectangle {
+                                    height: 48px;
+                                    Text {
+                                        text: line;
+                                        color: #424245;
+                                        font-size: 11px;
+                                        wrap: word-wrap;
+                                        x: 10px;
+                                        width: parent.width - 20px;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if root.active-tab != 0: VerticalLayout {
+                    Text {
+                        text: "即将推出";
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: #1d1d1f;
+                    }
+                    Text {
+                        text: "该设置页功能开发中。";
+                        color: #86868b;
+                        font-size: 13px;
+                        wrap: word-wrap;
+                    }
+                }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+[package]
+name = "sakucra-java"
+version = "0.1.0"
+description = "Java discovery and validation for Sakucra"
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
